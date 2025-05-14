@@ -3,13 +3,17 @@ import { ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart } from "lucide-rea
 import { fetchProductById } from "../lib/api"
 import { useParams, useNavigate } from "react-router-dom"
 
-export default function ProductDetail() {
+export default function ProductDetail({ addToCart, cartCount }) {
   const { id } = useParams()
   const navigate = useNavigate()
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [quantity, setQuantity] = useState(0)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
+
+  // const handleAddToCart = () => {
+  //   setCartItemCount(prev => prev + 1)
+  // }
   
   useEffect(() => {
     const getProduct = async () => {
@@ -34,12 +38,6 @@ export default function ProductDetail() {
   const handleQuantityChange = (amount) => {
     const newQuantity = Math.max(0, quantity + amount)
     setQuantity(newQuantity)
-  }
-
-  const handleAddToCart = () => {
-    if (quantity > 0) {
-      // add-to-cart logic would be here
-    }
   }
 
   const handleThumbnailClick = (index) => {
@@ -75,13 +73,23 @@ export default function ProductDetail() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
-      <button 
-        onClick={() => navigate("/")}
-        className="flex items-center text-sm font-medium mb-6 hover:underline"
-      >
-        <ChevronLeft className="h-4 w-4 mr-1" />
-        Back to Products
-      </button>
+      <div className="mb-8 flex items-center justify-between">
+        <button 
+          onClick={() => navigate("/")}
+          className="flex items-center text-sm font-medium mb-6 hover:underline"
+        >
+          <ChevronLeft className="h-4 w-4 mr-1" />
+          Back to Products
+        </button>
+        <div className="relative">
+          <ShoppingCart size={28} />
+          {cartCount > 0 && (
+            <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+              {cartCount}
+            </span>
+          )}
+        </div>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
@@ -139,7 +147,7 @@ export default function ProductDetail() {
           
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
 
-            <div className="flex items-center bg-gray-100 rounded-md">
+            <div className="flex items-center justify-center bg-gray-100 rounded-md">
               <button
                 onClick={() => handleQuantityChange(-1)}
                 className="p-3 text-orange-500 hover:text-orange-700 focus:outline-none"
@@ -155,7 +163,7 @@ export default function ProductDetail() {
               </button>
             </div>
             
-            <button
+            {/* <button
               onClick={handleAddToCart}
               disabled={quantity === 0}
               className={`flex items-center justify-center px-6 py-3 rounded-md ${
@@ -166,6 +174,13 @@ export default function ProductDetail() {
             >
               <ShoppingCart className="h-5 w-5 mr-2" />
               Add to cart
+            </button> */}
+            <button 
+              onClick={() => addToCart(product)} 
+              className="px-4 py-2 bg-green-500 text-white rounded flex items-center justify-center"
+            >
+              <ShoppingCart className="h-5 w-5 mr-2" />
+              Add to Cart
             </button>
           </div>
         </div>
