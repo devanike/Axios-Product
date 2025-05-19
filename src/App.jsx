@@ -1,32 +1,24 @@
 import './App.css'
-import { useState } from "react"
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
 
 import ProductDetail from "./pages/product-detail"
 import HomePage from "./pages/products-page"
+import CartPage from "./pages/cart-page"
+import { CartProvider } from "./context/cart-context"
 
-function App() {
-  const [cartItems, setCartItems] = useState([])
-
-  const addToCart = (product) => {
-    setCartItems(prev => {
-      // checks if the product id already exists
-      const exists = prev.some(item => item.id === product.id)
-      if (exists) return prev
-      return [...prev, product]
-    })
-  }
+export default function App() {
 
   return (
-    <Router>
-      <div className="max-w-7xl bg-green-100 mx-auto px-4 py-8 overflow-hidden ">
-        <Routes>
-          <Route path="/" element={<HomePage cartCount={cartItems.length}/>} />
-          <Route path="/product/:id" element={<ProductDetail addToCart={addToCart} cartCount={cartItems.length}/>} />
-        </Routes>
-      </div>
-    </Router>
+    <CartProvider>
+      <Router>
+        <div className="max-w-7xl bg-green-100 mx-auto px-4 py-8 overflow-hidden ">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+            <Route path="/cart" element={<CartPage />} />
+          </Routes>
+        </div>
+      </Router>
+    </CartProvider>
   )
 }
-
-export default App

@@ -1,17 +1,17 @@
 import { useState, useEffect } from "react"
 import { ShoppingCart } from "lucide-react";
-
+import { Link } from "react-router-dom"
 import ProductGrid from "../components/product-grid"
 import CategoryFilter from "../components/category-filter"
 import Pagination from "../components/pagination"
 import SortingOptions from "../components/sorting"
 import { fetchProducts, fetchCategories } from "../lib/api"
+import { useCart } from "../context/cart-context"
 
-export default function HomePage({ cartCount }) {
-
+export default function HomePage() {
+  const { cartCount } = useCart()
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
-  // const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [selectedCategory, setSelectedCategory] = useState(null)
@@ -35,9 +35,8 @@ export default function HomePage({ cartCount }) {
   // fetches products when page, category, or sort option changes
   useEffect(() => {
     const getProducts = async () => {
-      // setLoading(true)
       try {
-        // offset pagination calculation
+        // pagination calculation
         const offset = (currentPage - 1) * productsPerPage
 
         // fetching products with filters
@@ -55,27 +54,22 @@ export default function HomePage({ cartCount }) {
         setTotalPages(total)
       } catch (error) {
         console.error("Error fetching products:", error)
-      } finally {
-        // setLoading(false)
       }
     }
 
     getProducts()
   }, [currentPage, selectedCategory, sortOption])
 
-  // handles category change
   const handleCategoryChange = (categoryId) => {
     setSelectedCategory(categoryId)
     setCurrentPage(1) 
   }
 
-  // handles sort change
   const handleSortChange = (option) => {
     setSortOption(option)
     setCurrentPage(1)
   }
 
-  // handles page change
   const handlePageChange = (page) => {
     setCurrentPage(page)
     window.scrollTo({ top: 0, behavior: "smooth" })
@@ -85,14 +79,14 @@ export default function HomePage({ cartCount }) {
     <div className="my-8">
       <div className="mb-8 flex justify-between">
         <h1 className="text-4xl font-bold mb-2">Gracie's Shop</h1>
-        <div className="relative ml-4 flex items-center text-gray-600">
+        <Link to="/cart" className="relative ml-4 flex items-center text-gray-600">
           <ShoppingCart size={24}/>
           {cartCount > 0 && (
             <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
               {cartCount}
             </span>
           )}
-        </div>
+        </Link>
       </div>
 
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
